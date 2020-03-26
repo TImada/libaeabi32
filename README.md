@@ -1,2 +1,2 @@
 # libaeabi32
-A library to provide __aeabi_* functions for aarch32
+A library to provide aeabi functions for aarch32
