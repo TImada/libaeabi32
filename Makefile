@@ -25,4 +25,4 @@ install:
 	install -m 644 $(OUTPUT) $(INSTALL_DIR)
 
 clean:
-	rm -rf *.o $(OUTPUT)
+	rm -f $(OBJS) $(OUTPUT)

@@ -1,12 +1,11 @@
-// SPDX-License-Identifier: BSD-3-Clause
 
 /*============================================================================
 
 This C source file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3a, by John R. Hauser.
+Package, Release 3e, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014 The Regents of the University of California.
-All rights reserved.
+Copyright 2011, 2012, 2013, 2014, 2017 The Regents of the University of
+California.  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -87,8 +86,8 @@ void
     sigA = aSPtr->signif;
     /*------------------------------------------------------------------------
     *------------------------------------------------------------------------*/
-    if ( ! (sigA & UINT64_C( 0x8000000000000000 )) && (exp != 0x7FFF) ) {
-        if ( ! sigA ) {
+    if ( !(sigA & UINT64_C( 0x8000000000000000 )) && (exp != 0x7FFF) ) {
+        if ( !sigA ) {
             uiZ64 = signUI64;
             sigZ = 0;
             goto uiZ;
@@ -101,7 +100,7 @@ void
         if ( exact ) softfloat_exceptionFlags |= softfloat_flag_inexact;
         switch ( roundingMode ) {
          case softfloat_round_near_even:
-            if ( ! (sigA & UINT64_C( 0x7FFFFFFFFFFFFFFF )) ) break;
+            if ( !(sigA & UINT64_C( 0x7FFFFFFFFFFFFFFF )) ) break;
          case softfloat_round_near_maxMag:
             if ( exp == 0x3FFE ) goto mag1;
             break;
@@ -109,8 +108,12 @@ void
             if ( signUI64 ) goto mag1;
             break;
          case softfloat_round_max:
-            if ( ! signUI64 ) goto mag1;
+            if ( !signUI64 ) goto mag1;
             break;
+#ifdef SOFTFLOAT_ROUND_ODD
+         case softfloat_round_odd:
+            goto mag1;
+#endif
         }
         uiZ64 = signUI64;
         sigZ = 0;
@@ -145,19 +148,22 @@ void
         sigZ += lastBitMask>>1;
     } else if ( roundingMode == softfloat_round_near_even ) {
         sigZ += lastBitMask>>1;
-        if ( ! (sigZ & roundBitsMask) ) sigZ &= ~lastBitMask;
-    } else if ( roundingMode != softfloat_round_minMag ) {
-        if ( (signUI64 != 0) ^ (roundingMode == softfloat_round_max) ) {
-            sigZ += roundBitsMask;
-        }
+        if ( !(sigZ & roundBitsMask) ) sigZ &= ~lastBitMask;
+    } else if (
+        roundingMode == (signUI64 ? softfloat_round_min : softfloat_round_max)
+    ) {
+        sigZ += roundBitsMask;
     }
     sigZ &= ~roundBitsMask;
-    if ( ! sigZ ) {
+    if ( !sigZ ) {
         ++uiZ64;
         sigZ = UINT64_C( 0x8000000000000000 );
     }
-    if ( exact && (sigZ != sigA) ) {
-        softfloat_exceptionFlags |= softfloat_flag_inexact;
+    if ( sigZ != sigA ) {
+#ifdef SOFTFLOAT_ROUND_ODD
+        if ( roundingMode == softfloat_round_odd ) sigZ |= lastBitMask;
+#endif
+        if ( exact ) softfloat_exceptionFlags |= softfloat_flag_inexact;
     }
  uiZ:
     zSPtr->signExp = uiZ64;

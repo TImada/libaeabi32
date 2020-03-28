@@ -1,8 +1,9 @@
 
 SWFLDIR := ./softfloat
 SWFLSRC := $(SWFLDIR)/source
+SWFL_ARCSRC := $(SWFLSRC)/ARM-VFPv2
 
-CFLAGS += -DLITTLEENDIAN -I$(SWFLDIR)/arm32_include -I$(SWFLSRC)/include -I$(SWFLSRC)/8086-SSE/
+CFLAGS += -DLITTLEENDIAN -I$(SWFLDIR)/arm32_include -I$(SWFLSRC)/include -I$(SWFL_ARCSRC)
 
 OBJS += $(SWFLSRC)/f32_add.o
 OBJS += $(SWFLSRC)/f32_div.o
@@ -60,3 +61,12 @@ OBJS += $(SWFLSRC)/s_countLeadingZeros64.o
 OBJS += $(SWFLSRC)/s_mul64To128.o
 
 OBJS += $(SWFLSRC)/softfloat_state.o
+
+OBJS += $(SWFL_ARCSRC)/softfloat_raiseFlags.o
+OBJS += $(SWFL_ARCSRC)/s_propagateNaNF32UI.o
+OBJS += $(SWFL_ARCSRC)/s_f32UIToCommonNaN.o
+OBJS += $(SWFL_ARCSRC)/s_commonNaNToF64UI.o
+OBJS += $(SWFL_ARCSRC)/s_f64UIToCommonNaN.o
+OBJS += $(SWFL_ARCSRC)/s_propagateNaNF64UI.o
+OBJS += $(SWFL_ARCSRC)/s_commonNaNToF32UI.o
+

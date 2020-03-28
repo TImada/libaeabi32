@@ -1,12 +1,11 @@
-// SPDX-License-Identifier: BSD-3-Clause
 
 /*============================================================================
 
 This C source file is part of the SoftFloat IEEE Floating-Point Arithmetic
-Package, Release 3a, by John R. Hauser.
+Package, Release 3e, by John R. Hauser.
 
-Copyright 2011, 2012, 2013, 2014 The Regents of the University of California.
-All rights reserved.
+Copyright 2011, 2012, 2013, 2014, 2015, 2016 The Regents of the University of
+California.  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -42,12 +41,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int softfloat_normExtF80SigM( uint64_t *sigPtr )
 {
     uint64_t sig;
-    int_fast8_t shiftCount;
+    int_fast8_t shiftDist;
 
     sig = *sigPtr;
-    shiftCount = softfloat_countLeadingZeros64( sig );
-    *sigPtr = sig<<shiftCount;
-    return -shiftCount;
+    shiftDist = softfloat_countLeadingZeros64( sig );
+    *sigPtr = sig<<shiftDist;
+    return -shiftDist;
 
 }
 

@@ -1,3 +1,4 @@
 *.o
 *.a
 ./softfloat/source/*.o
+./softfloat/source/ARM-VFPv2/*.o
